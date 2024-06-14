@@ -1,0 +1,37 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: microprofile-book-server
+  labels:
+    app: microprofile-book-server
+spec:
+  type: ClusterIP
+  selector:
+    app: microprofile-book-server
+  ports:
+    - name: tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: microprofile-book-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: microprofile-book-server
+  template:
+    metadata:
+      labels:
+        app: microprofile-book-server
+        version: v1
+    spec:
+      containers:
+      - name: microprofile-book-server
+        image: microprofile-book-server
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
