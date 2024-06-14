@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.validation.groups.ConvertGroup;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -14,6 +16,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import sample.microprofile.book.server.Book.Update;
 import sample.microprofile.book.server.exception.DuplicateException;
 import sample.microprofile.book.server.exception.NotFoundException;
 import sample.microprofile.book.server.repository.BookRepository;
@@ -33,7 +36,7 @@ public class BookController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Book get(@PathParam("id") int id) {
-        return repository.get(id);
+        return repository.get(id).orElse(null);
     }
 
     @GET
@@ -46,20 +49,20 @@ public class BookController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Book add(Book book) throws DuplicateException {
+    public Book add(@Valid Book book) throws DuplicateException {
         return repository.save(book);
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Book update(Book book) throws NotFoundException {
+    public Book update(@Valid @ConvertGroup(to = Update.class) Book book) throws NotFoundException {
         return repository.save(book);
     }
 
     @DELETE
     @Path("/{id}")
-    public void delete(int id) throws NotFoundException {
+    public void delete(@PathParam("id") int id) throws NotFoundException {
         repository.remove(id);
     }
 }

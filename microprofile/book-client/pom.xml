@@ -8,11 +8,13 @@
 		<artifactId>microprofile-book-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>microprofile-book-server</artifactId>
+	<artifactId>microprofile-book-client</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>io.helidon.microprofile.bean-validation</groupId>
-			<artifactId>helidon-microprofile-bean-validation</artifactId>
+			<groupId>sample</groupId>
+			<artifactId>microprofile-book-server</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

@@ -2,6 +2,7 @@ package sample.microprofile.book.server.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.annotation.PostConstruct;
@@ -9,6 +10,7 @@ import sample.microprofile.book.server.Book;
 import sample.microprofile.book.server.exception.DuplicateException;
 import sample.microprofile.book.server.exception.NotFoundException;
 
+//@ApplicationScoped
 public class InMemoryBookRepository implements BookRepository {
 
     private Map<Integer, Book> bookMap;
@@ -22,37 +24,41 @@ public class InMemoryBookRepository implements BookRepository {
     }
 
     @Override
-    public Book get(int id) {
-        return bookMap.get(id);
+    public Optional<Book> get(int id) {
+        return Optional.ofNullable(bookMap.get(id));
     }
 
     @Override
     public List<Book> findByAuthorStartingWith(String prefix) {
         return bookMap.values().stream()
                 .filter(book -> book.getAuthor().startsWith(prefix))
+                .sorted((book1, book2) -> Integer.compare(book1.getId(), book2.getId()))
                 .toList();
     }
 
     @Override
-    public Book findByTitle(String title) {
-        return bookMap.values().stream()
-                .filter(book -> book.getTitle().equals(title))
-                .findFirst()
-                .get();
-    }
-
-    @Override
     public Book save(Book book) throws DuplicateException, NotFoundException {
+
         book = book.clone();
         if (book.getId() != null) { // for update
-            if (findByTitle(book.getTitle()) != null) {
+            if (!bookMap.containsKey(book.getId())) {
+                throw new NotFoundException("id:" + book.getId());
+            }
+            if (findByTitle(book.getTitle())
+                    .filter(book::hasSameTitleAs)
+                    .isPresent()) {
                 throw new DuplicateException("title:" + book.getTitle());
             }
         } else { // for add
+            if (findByTitle(book.getTitle()).isPresent()) {
+                throw new DuplicateException("title:" + book.getTitle());
+            }
             int nextId = bookMap.keySet().stream().max(Integer::compareTo).get() + 1;
             book.setId(nextId);
         }
-        return bookMap.put(book.getId(), book);
+
+        bookMap.put(book.getId(), book);
+        return book;
     }
 
     @Override
@@ -61,6 +67,12 @@ public class InMemoryBookRepository implements BookRepository {
             throw new NotFoundException("id:" + id);
         }
         bookMap.remove(id);
+    }
+
+    public Optional<Book> findByTitle(String title) {
+        return bookMap.values().stream()
+                .filter(book -> book.getTitle().equals(title))
+                .findFirst();
     }
 
 }
