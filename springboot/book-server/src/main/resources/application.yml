@@ -23,6 +23,15 @@ spring:
   h2:
     console:
       enabled: true
+
 jwt-validator:
   public-key: classpath:/jwt.pub.key
   claim-issuer: JsonWebTokenIntegrationTest
+
+app:
+  info:
+    name: book-server
+    create-date: 2024/06/16
+    company:
+      name: mamezou
+      url: https://www.mamezou.com/

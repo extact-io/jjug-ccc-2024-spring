@@ -17,11 +17,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import sample.spring.book.server.exception.DuplicateException;
-import sample.spring.book.server.exception.ExceptionMapping;
+import sample.spring.book.server.exception.ExceptionHandle;
 import sample.spring.book.server.exception.NotFoundException;
 
 @RestController
-@ExceptionMapping
+@ExceptionHandle
 @RequestMapping("/books")
 public class BookController {
 
@@ -55,5 +55,11 @@ public class BookController {
     @DeleteMapping("/{id}")
     public void delete(@NotNull @PathVariable int id) throws NotFoundException {
         repository.remove(id);
+    }
+
+    // for debug
+    @GetMapping("/repo-class")
+    public String repo() {
+        return repository.getClass().getSimpleName();
     }
 }

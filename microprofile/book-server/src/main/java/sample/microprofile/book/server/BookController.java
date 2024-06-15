@@ -67,4 +67,11 @@ public class BookController {
     public void delete(@NotNull @PathParam("id") int id) throws NotFoundException {
         repository.remove(id);
     }
+
+    // for debug
+    @GET
+    @Path("/repo-class")
+    public String repo() {
+        return repository.getClass().getSimpleName();
+    }
 }

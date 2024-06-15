@@ -5,6 +5,7 @@ import java.security.interfaces.RSAPublicKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -22,11 +23,13 @@ import org.springframework.security.oauth2.server.resource.web.access.BearerToke
 import org.springframework.security.web.SecurityFilterChain;
 
 import ch.qos.logback.access.tomcat.LogbackValve;
+import sample.spring.book.server.config.AppInfo;
 
 @SpringBootApplication
 @EnableJpaRepositories
 @EnableAspectJAutoProxy
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
+@EnableConfigurationProperties(AppInfo.class)
 public class BookApplication {
 
     public static void main(String[] args) {

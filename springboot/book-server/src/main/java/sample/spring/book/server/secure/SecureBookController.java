@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import sample.spring.book.server.Book;
 import sample.spring.book.server.BookRepository;
-import sample.spring.book.server.exception.ExceptionMapping;
+import sample.spring.book.server.exception.ExceptionHandle;
 
 @RestController
-@ExceptionMapping
+@ExceptionHandle
 @RequestMapping("/secure/books")
 public class SecureBookController {
 

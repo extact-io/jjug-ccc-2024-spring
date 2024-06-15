@@ -12,8 +12,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import io.helidon.microprofile.testing.junit5.AddConfig;
 import io.helidon.microprofile.testing.junit5.HelidonTest;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Response.Status;
+import sample.microprofile.book.client.exception.DuplicateClientException;
+import sample.microprofile.book.client.exception.NotFoundClientException;
 
 @HelidonTest
 @AddConfig(key = "server.port", value = "7001")
@@ -72,9 +72,9 @@ public class BookServiceTest {
     void testAddOccurDuplicateException() {
         BookDto addBook = new BookDto(null, "峠", "司馬遼太郎");
         assertThatThrownBy(() -> target.add(addBook))
-            .isInstanceOfSatisfying(
-                    WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.CONFLICT.getStatusCode()));
+                .isInstanceOfSatisfying(
+                        DuplicateClientException.class,
+                        e -> assertThat(e.getMessage()).contains("message"));
     }
 
     @Test
@@ -82,17 +82,17 @@ public class BookServiceTest {
     void testUpdateOccurNotFoundException() {
         BookDto updateBook = new BookDto(999, "新宿鮫", "大沢在昌");
         assertThatThrownBy(() -> target.update(updateBook))
-            .isInstanceOfSatisfying(
-                    WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.NOT_FOUND.getStatusCode()));
+                .isInstanceOfSatisfying(
+                        NotFoundClientException.class,
+                        e -> assertThat(e.getMessage()).contains("message"));
     }
 
     @Test
     @Order(9)
     void testDeleteOccurNotFoundException() {
         assertThatThrownBy(() -> target.delete(999))
-            .isInstanceOfSatisfying(
-                    WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.NOT_FOUND.getStatusCode()));
+                .isInstanceOfSatisfying(
+                        NotFoundClientException.class,
+                        e -> assertThat(e.getMessage()).contains("message"));
     }
 }
