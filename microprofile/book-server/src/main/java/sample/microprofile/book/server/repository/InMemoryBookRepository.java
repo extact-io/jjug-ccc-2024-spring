@@ -10,7 +10,9 @@ import sample.microprofile.book.server.Book;
 import sample.microprofile.book.server.BookRepository;
 import sample.microprofile.book.server.exception.DuplicateException;
 import sample.microprofile.book.server.exception.NotFoundException;
+import sample.microprofile.book.server.interceptor.TraceLoggable;
 
+@TraceLoggable
 public class InMemoryBookRepository implements BookRepository {
 
     private Map<Integer, Book> bookMap;

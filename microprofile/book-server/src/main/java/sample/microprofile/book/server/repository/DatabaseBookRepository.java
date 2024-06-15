@@ -3,6 +3,8 @@ package sample.microprofile.book.server.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.exception.ConstraintViolationException;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -10,8 +12,10 @@ import sample.microprofile.book.server.Book;
 import sample.microprofile.book.server.BookRepository;
 import sample.microprofile.book.server.exception.DuplicateException;
 import sample.microprofile.book.server.exception.NotFoundException;
+import sample.microprofile.book.server.interceptor.TraceLoggable;
 
 @Transactional
+@TraceLoggable
 public class DatabaseBookRepository implements BookRepository {
 
     @PersistenceContext
@@ -37,8 +41,13 @@ public class DatabaseBookRepository implements BookRepository {
             get(book.getId()).orElseThrow(() -> new NotFoundException("id:" + book.getId()));
         }
 
-        Book saved = em.merge(book);
-        em.flush();
+        Book saved;
+        try {
+            saved = em.merge(book);
+            em.flush();
+        } catch (ConstraintViolationException e) { // hibernateに依存がでるのはよくないが..
+            throw new DuplicateException(e.getMessage(), e);
+        }
 
         return saved;
     }

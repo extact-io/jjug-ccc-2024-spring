@@ -5,6 +5,9 @@ import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.ConvertGroup;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -34,14 +37,14 @@ public class BookController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Book get(@PathParam("id") int id) {
+    public Book get(@NotNull @PathParam("id") int id) {
         return repository.get(id).orElse(null);
     }
 
     @GET
     @Path("/author")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Book> findByAuthorStartingWith(@QueryParam("prefix") String prefix) {
+    public List<Book> findByAuthorStartingWith(@NotBlank @Size(max= 10) @QueryParam("prefix") String prefix) {
         return repository.findByAuthorStartingWith(prefix);
     }
 
@@ -61,7 +64,7 @@ public class BookController {
 
     @DELETE
     @Path("/{id}")
-    public void delete(@PathParam("id") int id) throws NotFoundException {
+    public void delete(@NotNull @PathParam("id") int id) throws NotFoundException {
         repository.remove(id);
     }
 }

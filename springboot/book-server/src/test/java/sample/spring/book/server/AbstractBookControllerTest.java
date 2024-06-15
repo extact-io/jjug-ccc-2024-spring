@@ -12,11 +12,12 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.annotation.DeleteExchange;
@@ -29,7 +30,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = "spring.main.banner-mode=off")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class AbstractBookControllerTest {
+abstract class AbstractBookControllerTest {
 
     private BookControllerClient target;
 
@@ -91,13 +92,33 @@ class AbstractBookControllerTest {
     }
 
     @Test
+    @Order(5)
+    void testAddOccurValidationError() {
+        Book addBook = new Book(null, null, null);
+        assertThatThrownBy(() -> target.add(addBook))
+            .isInstanceOfSatisfying(
+                    HttpClientErrorException.class,
+                    e -> assertThat(e.getStatusCode().value()).isEqualTo(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    @Order(5)
+    void testUpdateOccurValidationError() {
+        Book addBook = new Book(null, null, null);
+        assertThatThrownBy(() -> target.update(addBook))
+            .isInstanceOfSatisfying(
+                    HttpClientErrorException.class,
+                    e -> assertThat(e.getStatusCode().value()).isEqualTo(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
     @Order(9)
     void testAddOccurDuplicateException() {
         Book addBook = new Book(null, "峠", "司馬遼太郎");
         assertThatThrownBy(() -> target.add(addBook))
                 .isInstanceOfSatisfying(
-                        HttpServerErrorException.class,
-                        e -> assertThat(e.getStatusCode().value()).isEqualTo(500));
+                        HttpClientErrorException.class,
+                        e -> assertThat(e.getStatusCode().value()).isEqualTo(HttpStatus.CONFLICT.value()));
     }
 
     @Test
@@ -106,8 +127,8 @@ class AbstractBookControllerTest {
         Book updateBook = new Book(999, "新宿鮫", "大沢在昌");
         assertThatThrownBy(() -> target.update(updateBook))
                 .isInstanceOfSatisfying(
-                        HttpServerErrorException.class,
-                        e -> assertThat(e.getStatusCode().value()).isEqualTo(500));
+                        HttpClientErrorException.class,
+                        e -> assertThat(e.getStatusCode().value()).isEqualTo(HttpStatus.NOT_FOUND.value()));
     }
 
     @Test
@@ -115,8 +136,8 @@ class AbstractBookControllerTest {
     void testDeleteOccurNotFoundException() {
         assertThatThrownBy(() -> target.delete(999))
                 .isInstanceOfSatisfying(
-                        HttpServerErrorException.class,
-                        e -> assertThat(e.getStatusCode().value()).isEqualTo(500));
+                        HttpClientErrorException.class,
+                        e -> assertThat(e.getStatusCode().value()).isEqualTo(HttpStatus.NOT_FOUND.value()));
     }
 
     @Test
@@ -124,8 +145,8 @@ class AbstractBookControllerTest {
     void testUpdateOccurConstrainException() {
         assertThatThrownBy(() -> target.update(new Book(3, "燃えよ剣", null)))
                 .isInstanceOfSatisfying(
-                        HttpServerErrorException.class,
-                        e -> assertThat(e.getStatusCode().value()).isEqualTo(500));
+                        HttpClientErrorException.class,
+                        e -> assertThat(e.getStatusCode().value()).isEqualTo(HttpStatus.CONFLICT.value()));
     }
 
     @HttpExchange(url = "/books")

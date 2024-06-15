@@ -15,8 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpClientErrorException;
 
 import sample.spring.book.server.BookApplication;
 
@@ -90,8 +91,8 @@ public class BookServiceTest {
         BookDto addBook = new BookDto(null, "峠", "司馬遼太郎");
         assertThatThrownBy(() -> target.add(addBook))
                 .isInstanceOfSatisfying(
-                        HttpServerErrorException.class,
-                        e -> assertThat(e.getStatusCode().value()).isEqualTo(500));
+                        HttpClientErrorException.class,
+                        e -> assertThat(e.getStatusCode().value()).isEqualTo(HttpStatus.CONFLICT.value()));
     }
 
     @Test
@@ -100,8 +101,8 @@ public class BookServiceTest {
         BookDto updateBook = new BookDto(999, "新宿鮫", "大沢在昌");
         assertThatThrownBy(() -> target.update(updateBook))
                 .isInstanceOfSatisfying(
-                        HttpServerErrorException.class,
-                        e -> assertThat(e.getStatusCode().value()).isEqualTo(500));
+                        HttpClientErrorException.class,
+                        e -> assertThat(e.getStatusCode().value()).isEqualTo(HttpStatus.NOT_FOUND.value()));
     }
 
     @Test
@@ -109,7 +110,7 @@ public class BookServiceTest {
     void testDeleteOccurNotFoundException() {
         assertThatThrownBy(() -> target.delete(999))
                 .isInstanceOfSatisfying(
-                        HttpServerErrorException.class,
-                        e -> assertThat(e.getStatusCode().value()).isEqualTo(500));
+                        HttpClientErrorException.class,
+                        e -> assertThat(e.getStatusCode().value()).isEqualTo(HttpStatus.NOT_FOUND.value()));
     }
 }

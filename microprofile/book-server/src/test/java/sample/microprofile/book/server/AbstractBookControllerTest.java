@@ -25,6 +25,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response.Status;
 
 @HelidonTest
 @AddConfig(key = "server.port", value = "7001")
@@ -86,13 +87,33 @@ abstract class AbstractBookControllerTest {
     }
 
     @Test
+    @Order(5)
+    void testAddOccurValidationError() {
+        Book addBook = new Book(null, null, null);
+        assertThatThrownBy(() -> target.add(addBook))
+            .isInstanceOfSatisfying(
+                    WebApplicationException.class,
+                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.BAD_REQUEST.getStatusCode()));
+    }
+
+    @Test
+    @Order(5)
+    void testUpdateOccurValidationError() {
+        Book addBook = new Book(null, null, null);
+        assertThatThrownBy(() -> target.update(addBook))
+            .isInstanceOfSatisfying(
+                    WebApplicationException.class,
+                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.BAD_REQUEST.getStatusCode()));
+    }
+
+    @Test
     @Order(9)
     void testAddOccurDuplicateException() {
         Book addBook = new Book(null, "峠", "司馬遼太郎");
         assertThatThrownBy(() -> target.add(addBook))
             .isInstanceOfSatisfying(
                     WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
+                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.CONFLICT.getStatusCode()));
     }
 
     @Test
@@ -102,7 +123,7 @@ abstract class AbstractBookControllerTest {
         assertThatThrownBy(() -> target.update(updateBook))
             .isInstanceOfSatisfying(
                     WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
+                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.NOT_FOUND.getStatusCode()));
     }
 
     @Test
@@ -111,7 +132,7 @@ abstract class AbstractBookControllerTest {
         assertThatThrownBy(() -> target.delete(999))
             .isInstanceOfSatisfying(
                     WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
+                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.NOT_FOUND.getStatusCode()));
     }
 
     @Test
@@ -120,7 +141,7 @@ abstract class AbstractBookControllerTest {
         assertThatThrownBy(() -> target.update(new Book(3, "燃えよ剣", null)))
             .isInstanceOfSatisfying(
                     WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
+                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.CONFLICT.getStatusCode()));
     }
 
     @Path("books")

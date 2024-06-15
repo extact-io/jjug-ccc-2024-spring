@@ -4,16 +4,20 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import io.helidon.microprofile.testing.junit5.AddConfig;
 import io.helidon.microprofile.testing.junit5.HelidonTest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response.Status;
 
 @HelidonTest
 @AddConfig(key = "server.port", value = "7001")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BookServiceTest {
 
     @Inject
@@ -51,7 +55,7 @@ public class BookServiceTest {
         BookDto actual = target.add(addBook);
         assertThat(actual.getId()).isEqualTo(4);
 
-        BookDto updateBook = addBook;
+        BookDto updateBook = actual;
         updateBook.setTitle("update-title");
         updateBook.setAuthor("update-author");
 
@@ -70,7 +74,7 @@ public class BookServiceTest {
         assertThatThrownBy(() -> target.add(addBook))
             .isInstanceOfSatisfying(
                     WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
+                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.CONFLICT.getStatusCode()));
     }
 
     @Test
@@ -80,7 +84,7 @@ public class BookServiceTest {
         assertThatThrownBy(() -> target.update(updateBook))
             .isInstanceOfSatisfying(
                     WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
+                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.NOT_FOUND.getStatusCode()));
     }
 
     @Test
@@ -89,6 +93,6 @@ public class BookServiceTest {
         assertThatThrownBy(() -> target.delete(999))
             .isInstanceOfSatisfying(
                     WebApplicationException.class,
-                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
+                    e -> assertThat(e.getResponse().getStatus()).isEqualTo(Status.NOT_FOUND.getStatusCode()));
     }
 }

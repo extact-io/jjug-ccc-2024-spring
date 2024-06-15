@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import sample.microprofile.book.server.exception.DuplicateException;
 import sample.microprofile.book.server.exception.NotFoundException;
+import sample.microprofile.book.server.interceptor.TraceLoggable;
 
+@TraceLoggable
 public interface BookRepository {
 
     Optional<Book> get(int id);

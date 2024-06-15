@@ -11,11 +11,13 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.PostConstruct;
 import sample.spring.book.server.Book;
 import sample.spring.book.server.BookRepository;
+import sample.spring.book.server.advise.TraceLoggable;
 import sample.spring.book.server.exception.DuplicateException;
 import sample.spring.book.server.exception.NotFoundException;
 
-@Component
 @ConditionalOnProperty(name = "use.repository", havingValue = "inmemory")
+@Component
+@TraceLoggable
 public class InMemoryBookRepository implements BookRepository {
 
     private Map<Integer, Book> bookMap;

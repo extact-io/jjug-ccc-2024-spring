@@ -6,7 +6,6 @@ import java.util.Optional;
 import sample.spring.book.server.exception.DuplicateException;
 import sample.spring.book.server.exception.NotFoundException;
 
-
 public interface BookRepository {
 
     Optional<Book> get(int id);

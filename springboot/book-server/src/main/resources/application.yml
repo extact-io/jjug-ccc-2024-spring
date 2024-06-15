@@ -23,3 +23,6 @@ spring:
   h2:
     console:
       enabled: true
+jwt-validator:
+  public-key: classpath:/jwt.pub.key
+  claim-issuer: JsonWebTokenIntegrationTest
