@@ -1,16 +1,21 @@
-package sample.microprofile.book.server.repository;
+package sample.spring.book.server.repository;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import jakarta.annotation.PostConstruct;
-import sample.microprofile.book.server.Book;
-import sample.microprofile.book.server.BookRepository;
-import sample.microprofile.book.server.exception.DuplicateException;
-import sample.microprofile.book.server.exception.NotFoundException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
+import sample.spring.book.server.Book;
+import sample.spring.book.server.BookRepository;
+import sample.spring.book.server.exception.DuplicateException;
+import sample.spring.book.server.exception.NotFoundException;
+
+@Component
+@ConditionalOnProperty(name = "use.repository", havingValue = "inmemory")
 public class InMemoryBookRepository implements BookRepository {
 
     private Map<Integer, Book> bookMap;

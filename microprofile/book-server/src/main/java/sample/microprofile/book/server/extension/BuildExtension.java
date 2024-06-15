@@ -1,4 +1,4 @@
-package sample.microprofile.book.server;
+package sample.microprofile.book.server.extension;
 
 import java.util.logging.Logger;
 
@@ -11,7 +11,7 @@ import jakarta.enterprise.inject.build.compatible.spi.ClassConfig;
 import jakarta.enterprise.inject.build.compatible.spi.Discovery;
 import jakarta.enterprise.inject.build.compatible.spi.Enhancement;
 import jakarta.enterprise.inject.build.compatible.spi.ScannedClasses;
-import sample.microprofile.book.server.repository.BookRepository;
+import sample.microprofile.book.server.BookRepository;
 
 public class BuildExtension implements BuildCompatibleExtension {
 

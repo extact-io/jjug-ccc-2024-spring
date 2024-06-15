@@ -7,10 +7,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import sample.microprofile.book.server.Book;
+import sample.microprofile.book.server.BookRepository;
 import sample.microprofile.book.server.exception.DuplicateException;
 import sample.microprofile.book.server.exception.NotFoundException;
 
-//@ApplicationScoped
 @Transactional
 public class DatabaseBookRepository implements BookRepository {
 

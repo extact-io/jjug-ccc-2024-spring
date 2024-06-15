@@ -1,9 +1,8 @@
-package sample.microprofile.book.server.repository;
+package sample.microprofile.book.server;
 
 import java.util.List;
 import java.util.Optional;
 
-import sample.microprofile.book.server.Book;
 import sample.microprofile.book.server.exception.DuplicateException;
 import sample.microprofile.book.server.exception.NotFoundException;
 

@@ -19,7 +19,6 @@ import jakarta.ws.rs.core.MediaType;
 import sample.microprofile.book.server.Book.Update;
 import sample.microprofile.book.server.exception.DuplicateException;
 import sample.microprofile.book.server.exception.NotFoundException;
-import sample.microprofile.book.server.repository.BookRepository;
 
 @Path("books")
 @ApplicationScoped

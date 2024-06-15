@@ -117,7 +117,7 @@ abstract class AbstractBookControllerTest {
     @Test
     @Order(9)
     void testUpdateOccurConstrainException() {
-        assertThatThrownBy(() -> target.update(new Book(null, null, null)))
+        assertThatThrownBy(() -> target.update(new Book(3, "燃えよ剣", null)))
             .isInstanceOfSatisfying(
                     WebApplicationException.class,
                     e -> assertThat(e.getResponse().getStatus()).isEqualTo(500));
