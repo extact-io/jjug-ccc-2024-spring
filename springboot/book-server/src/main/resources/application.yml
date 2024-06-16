@@ -1,0 +1,37 @@
+logging.level:
+  org.springframework: INFO
+  sample: DEBUG
+
+spring:
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:mydb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create
+  sql:
+    init:
+      mode: embedded
+      data-locations: classpath:init-book.sql
+  h2:
+    console:
+      enabled: true
+
+jwt-validator:
+  public-key: classpath:/jwt.pub.key
+  claim-issuer: JsonWebTokenIntegrationTest
+
+app:
+  info:
+    name: book-server
+    create-date: 2024/06/16
+    company:
+      name: mamezou
+      url: https://www.mamezou.com/
